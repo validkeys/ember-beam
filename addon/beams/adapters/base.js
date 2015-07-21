@@ -15,9 +15,13 @@ export default Ember.Object.extend({
     return K;
   },
 
-  identify() {
+  identify: K,
 
-  },
+  alias: K,
+
+  // A place to set current user information
+  // like: mixpanel.people.set();
+  setUserInfo: K,
 
   // PRIVATE METHODS
 

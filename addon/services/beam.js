@@ -6,6 +6,8 @@ const ConfigProxyObject = Ember.Object.extend({
 
   __container__: null,
 
+  adapters: Ember.A([]),
+
   providers: Ember.computed('content', function() {
     return Object.keys(this.get('content'));
   }),
@@ -39,12 +41,11 @@ const ConfigProxyObject = Ember.Object.extend({
     }
     return providerAdapter;
   }
-
 });
 
 const activateAdapters = function() {
   let config    = this.get('_config'),
-      adapters  = this.get("_adapters");
+      adapters  = config.get("adapters");
 
   config.get('providers').forEach(( providerName ) => {
     let adapter = this.container.lookup("beam:adapters/" + providerName);
@@ -61,9 +62,8 @@ export default Ember.Service.extend({
 
   _config:    ConfigProxyObject.create({}),
 
-  _adapters:  [],
 
-  init: function() {
+  init() {
     this._super.apply(this, arguments);
 
     let config      = this.container.lookupFactory("config:environment"),
@@ -84,23 +84,51 @@ export default Ember.Service.extend({
     activateAdapters.call(this);
   },
 
+  invoke(method, ...args) {
+    if (!method) { 
+      throw new Error("No method passed to invoke");
+      return;
+    }
+    // Loop through each adapter and process
+    this.get("_config.adapters").forEach((adapter) => {
+      if (adapter[method]) {
+        adapter[method].apply(adapter, args);
+      }
+    });    
+  },
+
   // Get all of the adapters and call emit (for now)
   push(context, eventName, payload) {
-    console.log("Here!");
+
     // If event is not passed, set to an empty POJO
     if (typeof payload !== 'object') {
       payload = {}; 
     }
 
-    if (this.get("_adapters.length") === 0) {
+    if (this.get("_config.adapters.length") === 0) {
       Ember.Logger.info("Ember beam has no currently registered adapters");
     }
 
-    // Loop through each adapter and process
-    this.get("_adapters").forEach(function(adapter) {
-      adapter._process(context, eventName, payload);
-    });
+    this.invoke('_process', context, eventName, payload);
+  },
 
+
+  // User Identification
+  identify(context, identifier) {
+    if (!identifier) { return new Error("You must specify an identifier when calling Beam.identify") };
+    this.invoke('identify', context, identifier);
+  },
+
+
+  // User Aliasing
+  alias(context, alias) {
+    if (!alias) { return new Error("You must specify an alias when calling Beam.alias") };
+    this.invoke('alias', context, alias);
+  },
+
+  setUserInfo(context, options) {
+    if (!options) { return new Error("You must specify options when calling Beam.setUserInfo") };
+    this.invoke('setUserInfo', context, options);
   }
 
 });
