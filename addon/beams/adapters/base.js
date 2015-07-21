@@ -15,6 +15,10 @@ export default Ember.Object.extend({
     return K;
   },
 
+  identify() {
+
+  },
+
   // PRIVATE METHODS
 
   _namespace: Ember.computed(function() {

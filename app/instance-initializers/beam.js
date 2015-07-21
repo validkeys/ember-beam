@@ -1,1 +1,1 @@
-export { default } from 'datagem-components/instance-initializers/beam';
+export { default } from 'ember-beam/instance-initializers/beam';

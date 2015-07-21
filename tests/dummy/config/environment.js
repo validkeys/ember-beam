@@ -19,7 +19,7 @@ module.exports = function(environment) {
     },
 
     beam: {
-      mixpanel: { apiKey: "..." }
+      mixpanel: { token: "44eeb7f769c8d04726ffa9e61ac3282a" }
     }
   };
 

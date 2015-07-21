@@ -1,5 +1,15 @@
 # Ember-beam
 
+# THIS IS A WIP. DO NOT USE
+
+
+## TODO
+- [ ] Add event name mappings
+- [ ] Serializers for fields? Allow users to change style of individual fields
+- [ ] Add in after event hooks
+- [ ] Add in people specific hooks
+
+
 This README outlines the details of collaborating on this Ember addon.
 
 ## Installation

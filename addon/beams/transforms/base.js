@@ -15,7 +15,7 @@ export default Ember.Object.extend({
   // Whether or not the transform has a certain event
   _hasEvent(eventName) {
     let events = this.get("events");
-    return events.hasOwnProperty(eventName);
+    return events.hasOwnProperty(eventName) ? events[eventName] : undefined;
   },
 
   _applicationTransform: Ember.computed(function() {
@@ -47,19 +47,21 @@ export default Ember.Object.extend({
 
     // Run application defaults (if available)
     let withApplicationDefaults = this._getApplicationDefaults.apply(this, arguments);
-    
+    console.log(withApplicationDefaults);
     // Do any default transforms using the current providers defaults
     let transformedPayload = this._getProviderDefaults(context, eventName, withApplicationDefaults);
-
+    console.log(transformedPayload);
     // If the provider-specific transform has the current event run it
     // Otherwise, if the application transform has the event, use it
-    let providerTransformHasEvent     = this._hasEvent(eventName),
-        applicationTransformHasEvent  = this.get('_applicationTransform')._hasEvent(eventName);
+    let providerTransformEvent     = this._hasEvent(eventName),
+        applicationTransformEvent  = this.get('_applicationTransform')._hasEvent(eventName);
 
-    if (providerTransformHasEvent) {
-      transformedPayload = events[eventName].call(context, eventName, transformedPayload);      
-    } else if (applicationTransformHasEvent) {
-      transformedPayload = events[eventName].call(context, eventName, transformedPayload);
+    if (providerTransformEvent) {
+      transformedPayload = providerTransformEvent.call(context, eventName, transformedPayload);
+      console.log("provider", transformedPayload);
+    } else if (applicationTransformEvent) {
+      transformedPayload = applicationTransformEvent.call(context, eventName, transformedPayload);
+      console.log("application", transformedPayload);
     } 
 
     return transformedPayload;

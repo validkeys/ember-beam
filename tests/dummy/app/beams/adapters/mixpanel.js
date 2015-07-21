@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import BaseAdapter from 'datagem-components/beams/adapters/base';
+import BaseAdapter from 'ember-beam/beams/adapters/base';
 
 export default BaseAdapter.extend({
 
@@ -13,7 +13,7 @@ export default BaseAdapter.extend({
   // TODO: Add a call to all 
   emit: function(eventName, payload) {
     this._super.apply(this, arguments);
-    // mixpanel.track(eventName, payload);
+    mixpanel.track(eventName, payload);
   }
 
 });

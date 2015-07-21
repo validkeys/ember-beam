@@ -1,1 +1,1 @@
-export { default } from 'datagem-components/beams/adapters/mixpanel';
+export { default } from 'ember-beam/beams/adapters/mixpanel';
