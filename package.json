@@ -1,8 +1,8 @@
 {
   "name": "ember-beam",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
   "private": true,
+  "description": "The default blueprint for ember-cli addons.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -38,7 +38,9 @@
     "ember-sinon": "0.2.1",
     "ember-try": "0.0.6"
   },
-  "keywords": [],
+  "keywords": [
+    "ember-addon"
+  ],
   "dependencies": {
     "ember-cli-babel": "^5.0.0"
   },
