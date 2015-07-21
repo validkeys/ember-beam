@@ -53,6 +53,9 @@ export default Ember.Object.extend({
 
     // Call emit
     this.emit.call(this, eventName, cleansedPayload);
+
+    // Run hooks
+    this._runHooks(context, name, eventName, cleansedPayload)
   },
 
   _transform(context, name, eventName, payload) {
@@ -64,6 +67,15 @@ export default Ember.Object.extend({
       transformedPayload = transform.run(context, eventName, payload);
     }
     return transformedPayload;
+  },
+
+  _runHooks(context, namespace, eventName, payload) {
+    let providerHook = this.get('config').hooksFor(namespace, true);
+    if (providerHook) {
+      Ember.run(this, function() {
+        providerHook._run(context, eventName, payload);
+      });
+    }
   }
 
 });

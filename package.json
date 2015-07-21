@@ -1,7 +1,6 @@
 {
   "name": "ember-beam",
   "version": "0.0.0",
-  "private": true,
   "description": "The default blueprint for ember-cli addons.",
   "directories": {
     "doc": "doc",

@@ -43,10 +43,8 @@ export default Ember.Object.extend({
 
   run(context, eventName, payload) {
 
-    let events = this.get('events');
-
     // Run application defaults (if available)
-    let withApplicationDefaults = this._getApplicationDefaults.apply(this, arguments);
+    let withApplicationDefaults = this._getApplicationDefaults.call(this, context, eventName, payload);
 
     // Do any default transforms using the current providers defaults
     let transformedPayload = this._getProviderDefaults(context, eventName, withApplicationDefaults);
@@ -54,7 +52,8 @@ export default Ember.Object.extend({
     // If the provider-specific transform has the current event run it
     // Otherwise, if the application transform has the event, use it
     let providerTransformEvent     = this._hasEvent(eventName),
-        applicationTransformEvent  = this.get('_applicationTransform')._hasEvent(eventName);
+        applicationTransform       = this.get('_applicationTransform'),
+        applicationTransformEvent  = (applicationTransform) ? applicationTransform._hasEvent(eventName) : undefined;
 
     if (providerTransformEvent) {
       transformedPayload = providerTransformEvent.call(context, eventName, transformedPayload);
