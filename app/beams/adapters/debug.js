@@ -1,0 +1,1 @@
+export { default } from 'ember-beam/beams/adapters/debug';

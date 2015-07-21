@@ -2,28 +2,32 @@ import BeamTransform from 'ember-beam/beams/transforms/base';
 
 export default BeamTransform.extend({
 
-  defaults(eventName, payload) {
+  defaults(eventPackage, context) {
+    let { eventName, payload } = eventPackage;
     payload["ApplicationS"] = "Same Customer";
-    return payload;
+    return eventPackage;
   },
 
   events: {
-    "App Load": function(eventName, payload) {
-      payload["Transformed"] = true;
-      return payload;
+    "App Load": function(eventPackage, context) {
+      // let { eventName, payload } = eventPackage;
+      // payload["Transformed"] = true;
+      return eventPackage;
     },
 
 
-    "Page View": function(eventName, payload) {
-      let infos = this.router.get('router.currentHandlerInfos');
+    "Page View": function(eventPackage, context) {
+
+      let { eventName, payload } = eventPackage;
+      
+      let infos = context.router.get('router.currentHandlerInfos');
 
       payload["ember_path"] = _.chain(infos)
         .pluck('name')
         .join(" / ")
         .value();
 
-
-      return payload;
+      return eventPackage;
     }
   }
 

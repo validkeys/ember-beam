@@ -4,7 +4,7 @@ export default Ember.Object.extend({
 
   hooks: {},
 
-  _run(context, eventName, payload) {
+  _run(eventName, payload, context) {
     console.log("Running hook for: " + eventName);
     let hooks     = this.get('hooks'),
         eventHook = hooks[eventName];

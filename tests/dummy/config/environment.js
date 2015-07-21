@@ -19,6 +19,7 @@ module.exports = function(environment) {
     },
 
     beam: {
+      debug: true,
       mixpanel: { token: "44eeb7f769c8d04726ffa9e61ac3282a" }
     }
   };

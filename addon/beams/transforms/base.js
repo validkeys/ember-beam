@@ -1,4 +1,7 @@
 import Ember from 'ember';
+import {
+  camelizeKeys, lowercaseKeys, uppercaseKeys, capitalizeKeys, flattenObject
+} from 'ember-beam/utils/sanitize-helpers'
 
 const {
   K
@@ -6,8 +9,16 @@ const {
 
 export default Ember.Object.extend({
 
-  defaults(eventName, payload) {
-    return payload;
+  options: {
+    sanitize: {
+      keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
+      flattenPayload: true, // whether or not to flatten the payload
+    }
+  },
+
+  defaults(eventPackage, context) {
+    console.log("Base Transform defaults()", eventPackage);
+    return eventPackage;
   },
 
   events:   K,
@@ -18,36 +29,74 @@ export default Ember.Object.extend({
     return events.hasOwnProperty(eventName) ? events[eventName] : undefined;
   },
 
+  // Finds the transform for the application
   _applicationTransform: Ember.computed(function() {
     return this.container.lookup("beam:transforms/application");
   }),
 
   // Runs the defaults method on the provider-specific transform
-  _getProviderDefaults(context, eventName, payload) {
-    return this.defaults.call(context, eventName, payload);
+  _getProviderDefaults(eventPackage, context) {
+    return this.defaults(eventPackage, context);
   },
 
   // Runs the defaults on the application transform (if there is one)
-  _getApplicationDefaults(context, eventName, payload) {
+  _getApplicationDefaults(eventPackage, context) {
+
     let applicationTransform          = this.get('_applicationTransform'),
-        applicationTransformedPayload = null;
+        applicationTransformedPackage = null;
 
     if (applicationTransform) {
-      applicationTransformedPayload = applicationTransform.defaults.call(context, eventName, payload);
+      applicationTransformedPackage = applicationTransform.defaults.call(this, eventPackage, context);
     }
 
-    return applicationTransformedPayload || payload;
+    return applicationTransformedPackage || eventPackage;
   },
 
 
+  _preSanitize(eventPackage) {
 
-  run(context, eventName, payload) {
+    let { eventName, payload } = eventPackage;
+
+    const keyTransformers = {
+      lowercase:  lowercaseKeys,
+      uppercase:  uppercaseKeys,
+      capitalize: capitalizeKeys,
+      camelcase:  camelizeKeys
+    };
+
+    const possibleKeyformats = ['lowercase','uppercase','capitalize','camelcase'];
+
+    let sanitizeOptions = this.get('options.sanitize');
+
+    if (sanitizeOptions) {
+
+      // Change Key Formatting of payload
+      if (sanitizeOptions.keyFormat && possibleKeyformats.indexOf(sanitizeOptions.keyFormat) > -1) {
+        eventPackage.payload = keyTransformers[sanitizeOptions.keyFormat](payload);
+      }
+
+      // Flatten payload
+      if (sanitizeOptions.flattenPayload) {
+        eventPackage.payload = flattenObject(eventPackage.payload);
+      }
+    }
+
+    return eventPackage;
+  },
+
+
+  run(eventPackage, context) {
+
+    let { eventName, payload } = eventPackage;
 
     // Run application defaults (if available)
-    let withApplicationDefaults = this._getApplicationDefaults.call(this, context, eventName, payload);
+    eventPackage = this._getApplicationDefaults.call(this, eventPackage, context);
+    console.log("After Application Defaults:", eventPackage);
+
 
     // Do any default transforms using the current providers defaults
-    let transformedPayload = this._getProviderDefaults(context, eventName, withApplicationDefaults);
+    eventPackage = this._getProviderDefaults.call(this, eventPackage, context);
+    console.log("After Provider Defaults: ", eventPackage);
 
     // If the provider-specific transform has the current event run it
     // Otherwise, if the application transform has the event, use it
@@ -56,12 +105,18 @@ export default Ember.Object.extend({
         applicationTransformEvent  = (applicationTransform) ? applicationTransform._hasEvent(eventName) : undefined;
 
     if (providerTransformEvent) {
-      transformedPayload = providerTransformEvent.call(context, eventName, transformedPayload);
+      eventPackage = providerTransformEvent(eventPackage, context);
+      console.log("After provider event transform: ", eventPackage)
     } else if (applicationTransformEvent) {
-      transformedPayload = applicationTransformEvent.call(context, eventName, transformedPayload);
-    } 
+      eventPackage = applicationTransformEvent(eventPackage, context);
+      console.log("After application event transform: ", eventPackage)
+    }
 
-    return transformedPayload;
+    // Now that we have all of the data, let's pre-sanitize it
+    // these are general options like make all keys lower case, and camelizeKeys
+    eventPackage = this._preSanitize(eventPackage);
+
+    return eventPackage;
   }
 
 });

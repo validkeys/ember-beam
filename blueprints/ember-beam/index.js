@@ -1,5 +1,7 @@
 module.exports = {
-  description: ''
+  description: 'The Metrics framework for Ember',
+
+  normalizeEntityName: function() {},
 
   // locals: function(options) {
   //   // Return custom template variables here.

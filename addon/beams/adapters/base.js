@@ -10,6 +10,9 @@ export default Ember.Object.extend({
   setup: K,
 
 
+  // REQUIRED
+  // Public method where adapter communicates directly with provider
+  // ex. mixpanel.track(eventName, payload);
   emit(eventName, payload) {
     console.log("EMITTING TO " + this.get('_namespace'), { eventName: eventName, payload: payload });
     return K;
@@ -25,6 +28,8 @@ export default Ember.Object.extend({
 
   // PRIVATE METHODS
 
+  // Gets the namespace for the current adapter
+  // ex. mixpanel
   _namespace: Ember.computed(function() {
     let key = this._debugContainerKey,
         name = key.split("adapters/")[1];
@@ -34,46 +39,51 @@ export default Ember.Object.extend({
   // Takes eventName and arguments, checks for a transform
   // if found, transforms the payload then calls emit
   // otherwise calls emit
-  _process(context, eventName, payload) {
+  _process(eventName, payload, context) {
       
-    let name = this.get('_namespace');
+    let name = this.get('_namespace'),
+        eventPackage = { eventName: eventName, payload: payload };
 
     // Run transforms
-    let transformedPayload = this._transform(context, name, eventName, payload);
+    eventPackage = this._transform(name, eventPackage, context);
+    
 
-    // Cleanse Payload
-    let cleansedPayload = JSON.parse(JSON.stringify(transformedPayload));
 
-    // Run Mapping on Event Name
-    // This is useful if you want to have different transforms for an event
-    // that's similar like (published:mobileApp, published:desktop)
-    // The core data is going to be similar but you might want to handle the transform
-    // differently per event
+    // TODO: MAPPING OF JSON
 
+    // Cleanse Payload (replace this with the sanitize method below)
+    // let cleansedPayload = JSON.parse(JSON.stringify(transformedPayload));
+
+    // TODO: presanitize
+    // TODO: sanitize
 
     // Call emit
-    this.emit.call(this, eventName, cleansedPayload);
+    this.emit.call(this, eventPackage.eventName, eventPackage.payload);
 
     // Run hooks
-    this._runHooks(context, name, eventName, cleansedPayload)
+    // this._runHooks(context, name, eventName, eventPackage)
   },
 
-  _transform(context, name, eventName, payload) {
 
-    let transform           = this.get('config').transformFor(name, true),
-        transformedPayload  = payload;
+  // Find the transform for the current provider
+  // if found, run it
+  _transform(name, eventPackage, context) {
+
+    let transform           = this.get('config').transformFor(name, true);
 
     if (transform) {
-      transformedPayload = transform.run(context, eventName, payload);
+      eventPackage = transform.run(eventPackage, context);
     }
-    return transformedPayload;
+
+    console.log("POST TRANSFORM: ", eventPackage);
+    return eventPackage;
   },
 
-  _runHooks(context, namespace, eventName, payload) {
+  _runHooks(namespace, eventName, payload, context) {
     let providerHook = this.get('config').hooksFor(namespace, true);
     if (providerHook) {
       Ember.run(this, function() {
-        providerHook._run(context, eventName, payload);
+        providerHook._run(eventName, payload, context);
       });
     }
   }

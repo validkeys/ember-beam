@@ -19,18 +19,18 @@ export default BaseAdapter.extend({
     mixpanel.track(eventName, payload);
   },
 
-  identify(context, identifier) {
+  identify(identifier, context) {
     // console.log("MIXPANEL IDENTIFYING USER: " + identifier);
     mixpanel.identify(identifier);
   },
 
-  alias(context, alias) {
+  alias(alias, context) {
     // console.log("MIXPANEL ALIASING USER: " + alias);
     mixpanel.alias(alias);
   },
 
   // TODO: Should this have some sort of transform?
-  setUserInfo(context, options) {
+  setUserInfo(options, context) {
     // console.log("Mixpanel setting person data", options);
     mixpanel.people.set(options);
   }
