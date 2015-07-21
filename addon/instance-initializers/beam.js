@@ -12,7 +12,7 @@ export function initialize(instance) {
   // }
 
   // instance.container.register("config:beam", )
-
+  console.log("RINNING");
   instance.registry.injection('route', 'Beam', 'service:beam');
   instance.registry.injection('controller', 'Beam', 'service:beam');
   instance.registry.injection('component', 'Beam', 'service:beam');
