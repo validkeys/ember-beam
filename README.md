@@ -8,6 +8,7 @@
 - [ ] Serializers for fields? Allow users to change style of individual fields
 - [ ] Add in after event hooks
 - [ ] Add in people specific hooks
+- [ ] Add the ember-addons keyword back to package.json
 
 
 This README outlines the details of collaborating on this Ember addon.
