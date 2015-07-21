@@ -2,5 +2,9 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-beam'
+  name: 'ember-beam',
+
+  included: function(app) {
+    app.import(app.bowerDirectory + "/lodash/lodash.js");
+  }
 };
