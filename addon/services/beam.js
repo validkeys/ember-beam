@@ -54,6 +54,12 @@ export default Ember.Service.extend({
   // This is the main method for tracking events
   push(eventName, payload, context) {
 
+    // Check if no "real" payload was passed
+    if (arguments.length < 3) {
+      Ember.Logger.debug("You must pass all 3 parameters to Beam.push for now");
+      return;
+    }
+
     // If event is not passed, set to an empty POJO
     if (typeof payload !== 'object') { payload = {}; }
 
@@ -72,7 +78,7 @@ export default Ember.Service.extend({
   // User Identification
   identify(identifier, context) {
     if (!identifier) { return new Error("You must specify an identifier when calling Beam.identify"); }
-    this._invoke('identify', context, identifier);
+    this._invoke('identify', identifier, context);
     return this;
   },
 
@@ -80,13 +86,13 @@ export default Ember.Service.extend({
   // User Aliasing
   alias(alias, context) {
     if (!alias) { return new Error("You must specify an alias when calling Beam.alias"); }
-    this._invoke('alias', context, alias);
+    this._invoke('alias', alias, context);
     return this;
   },
 
   setUserInfo(options, context) {
     if (!options) { return new Error("You must specify options when calling Beam.setUserInfo"); }
-    this._invoke('setUserInfo', context, options);
+    this._invoke('setUserInfo', options, context);
     return this;
   }
 

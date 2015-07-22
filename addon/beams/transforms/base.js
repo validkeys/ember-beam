@@ -74,6 +74,8 @@ export default Ember.Object.extend({
       console.log("After application event transform: ", eventPackage)
     }
 
+    // Clean out all of the prototype / constructors
+    eventPackage = JSON.parse(JSON.stringify(eventPackage));
 
     // Now that we have the data, let's run mappings to extract only
     // the keys that the user wants
