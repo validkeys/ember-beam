@@ -53,6 +53,9 @@ export default Ember.Object.extend({
   },
 
 
+  // Runs a pre-sanitize operation on the payload
+  // This can be configured via options: { sanitize: {} }
+  // Right now the options are key casing and whether or not to flatten
   _preSanitize(eventPackage) {
 
     let { eventName, payload } = eventPackage;
@@ -85,6 +88,28 @@ export default Ember.Object.extend({
   },
 
 
+  _runMappings(eventPackage) {
+
+    let { eventName, payload } = eventPackage;
+
+    // First check if provider transform has mappings
+    // If not, fall back to application transform
+    // otherwise just return event page
+    let mappings = this.get("mappings") || this.get('_applicationTransform.mappings');
+    if (mappings && !Ember.isEmpty(mappings)) {
+      
+      _.each(payload, (data, key) => {
+        if (mappings[key]) {
+          let newData = _.pick(data, mappings[key]);
+          payload[key] = newData;
+        }
+      });
+
+    }
+
+    return eventPackage;
+  },
+
   run(eventPackage, context) {
 
     let { eventName, payload } = eventPackage;
@@ -111,6 +136,12 @@ export default Ember.Object.extend({
       eventPackage = applicationTransformEvent(eventPackage, context);
       console.log("After application event transform: ", eventPackage)
     }
+
+
+    // Now that we have the data, let's run mappings to extract only
+    // the keys that the user wants
+    eventPackage = this._runMappings(eventPackage);
+
 
     // Now that we have all of the data, let's pre-sanitize it
     // these are general options like make all keys lower case, and camelizeKeys

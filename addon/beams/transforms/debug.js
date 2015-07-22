@@ -4,8 +4,8 @@ export default BaseTransform.extend({
 
   options: {
     sanitize: {
-      keyFormat:      "camelcase",
-      flattenPayload: true
+      keyFormat:      false,
+      flattenPayload: false
     }
   },
 
