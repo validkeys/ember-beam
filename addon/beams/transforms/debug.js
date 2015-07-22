@@ -6,7 +6,6 @@ export default BaseTransform.extend({
   // This is an opportunity to allow for default attributes to be
   // added to a payload for each event
   defaults(eventPackage, context) {
-    Ember.Logger.info("Debug Transform: defaults()", eventPackage);
     return eventPackage;
   },
 

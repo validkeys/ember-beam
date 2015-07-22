@@ -22,7 +22,7 @@ export default Ember.Object.extend({
   // Public method where adapter communicates directly with provider
   // ex. mixpanel.track(eventName, payload);
   emit(eventName, payload) {
-    console.log("EMITTING TO " + this.get('_namespace'), { eventName: eventName, payload: payload });
+    // console.log("EMITTING TO " + this.get('_namespace'), { eventName: eventName, payload: payload });
     return K;
   },
 
@@ -81,7 +81,6 @@ export default Ember.Object.extend({
       eventPackage = transform.run(eventPackage, context);
     }
 
-    console.log("POST TRANSFORM: ", eventPackage);
     return eventPackage;
   },
 

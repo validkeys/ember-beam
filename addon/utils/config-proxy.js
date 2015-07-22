@@ -23,7 +23,6 @@ export default Ember.Object.extend({
 
     let providerTransform = this.__container__.lookup("beam:transforms/" + providerName);
     if (!providerTransform && fallbackToApplicationTransform) {
-      console.log("Falling back to application transform");
       providerTransform = this.__container__.lookup("beam:transforms/application");
     }
     return providerTransform;
@@ -36,7 +35,6 @@ export default Ember.Object.extend({
 
     let providerAdapter = this.__container__.lookup("beam:adapters/" + providerName);
     if (!providerAdapter && fallbackToApplicationAdapter) {
-      console.log("Falling back to application adapter");
       providerAdapter = this.__container__.lookup("beam:adapters/application");
     }
     return providerAdapter;
@@ -49,7 +47,6 @@ export default Ember.Object.extend({
 
     let providerHook = this.__container__.lookup("beam:hooks/" + providerName);
     if (!providerHook && fallbackToApplicationHook) {
-      console.log("Falling back to application hooks");
       providerHook = this.__container__.lookup("beam:hooks/application");
     }
     return providerHook;

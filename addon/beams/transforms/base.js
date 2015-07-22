@@ -8,7 +8,7 @@ const {
 export default Ember.Object.extend({
 
   defaults(eventPackage, context) {
-    console.log("Base Transform defaults()", eventPackage);
+    // console.log("Base Transform defaults()", eventPackage);
     return eventPackage;
   },
 
@@ -53,12 +53,12 @@ export default Ember.Object.extend({
     // Run application defaults (if available)
     // Should only affect the payload. a new name should not be returned here
     eventPackage = this._getApplicationDefaults.call(this, eventPackage, context);
-    console.log("After Application Defaults:", eventPackage);
+    // console.log("After Application Defaults:", eventPackage);
 
 
     // Do any default transforms using the current providers defaults
     eventPackage = this._getProviderDefaults.call(this, eventPackage, context);
-    console.log("After Provider Defaults: ", eventPackage);
+    // console.log("After Provider Defaults: ", eventPackage);
 
     // If the provider-specific transform has the current event run it
     // Otherwise, if the application transform has the event, use it
@@ -68,10 +68,10 @@ export default Ember.Object.extend({
 
     if (providerTransformEvent) {
       eventPackage = providerTransformEvent(eventPackage, context);
-      console.log("After provider event transform: ", eventPackage)
+      // console.log("After provider event transform: ", eventPackage)
     } else if (applicationTransformEvent) {
       eventPackage = applicationTransformEvent(eventPackage, context);
-      console.log("After application event transform: ", eventPackage)
+      // console.log("After application event transform: ", eventPackage)
     }
 
     // Clean out all of the prototype / constructors
