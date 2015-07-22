@@ -1,20 +1,11 @@
 import Ember from 'ember';
-import {
-  camelizeKeys, lowercaseKeys, uppercaseKeys, capitalizeKeys, flattenObject
-} from 'ember-beam/utils/sanitize-helpers'
+import Mapper from 'ember-beam/beams/lib/mapper';
 
 const {
   K
 } = Ember;
 
 export default Ember.Object.extend({
-
-  options: {
-    sanitize: {
-      keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
-      flattenPayload: true, // whether or not to flatten the payload
-    }
-  },
 
   defaults(eventPackage, context) {
     console.log("Base Transform defaults()", eventPackage);
@@ -53,68 +44,14 @@ export default Ember.Object.extend({
   },
 
 
-  // Runs a pre-sanitize operation on the payload
-  // This can be configured via options: { sanitize: {} }
-  // Right now the options are key casing and whether or not to flatten
-  _preSanitize(eventPackage) {
-
-    let { eventName, payload } = eventPackage;
-
-    const keyTransformers = {
-      lowercase:  lowercaseKeys,
-      uppercase:  uppercaseKeys,
-      capitalize: capitalizeKeys,
-      camelcase:  camelizeKeys
-    };
-
-    const possibleKeyformats = ['lowercase','uppercase','capitalize','camelcase'];
-
-    let sanitizeOptions = this.get('options.sanitize');
-
-    if (sanitizeOptions) {
-
-      // Change Key Formatting of payload
-      if (sanitizeOptions.keyFormat && possibleKeyformats.indexOf(sanitizeOptions.keyFormat) > -1) {
-        eventPackage.payload = keyTransformers[sanitizeOptions.keyFormat](payload);
-      }
-
-      // Flatten payload
-      if (sanitizeOptions.flattenPayload) {
-        eventPackage.payload = flattenObject(eventPackage.payload);
-      }
-    }
-
-    return eventPackage;
-  },
-
-
-  _runMappings(eventPackage) {
-
-    let { eventName, payload } = eventPackage;
-
-    // First check if provider transform has mappings
-    // If not, fall back to application transform
-    // otherwise just return event page
-    let mappings = this.get("mappings") || this.get('_applicationTransform.mappings');
-    if (mappings && !Ember.isEmpty(mappings)) {
-      
-      _.each(payload, (data, key) => {
-        if (mappings[key]) {
-          let newData = _.pick(data, mappings[key]);
-          payload[key] = newData;
-        }
-      });
-
-    }
-
-    return eventPackage;
-  },
+  _runMappings: Mapper,
 
   run(eventPackage, context) {
 
     let { eventName, payload } = eventPackage;
 
     // Run application defaults (if available)
+    // Should only affect the payload. a new name should not be returned here
     eventPackage = this._getApplicationDefaults.call(this, eventPackage, context);
     console.log("After Application Defaults:", eventPackage);
 
@@ -140,12 +77,8 @@ export default Ember.Object.extend({
 
     // Now that we have the data, let's run mappings to extract only
     // the keys that the user wants
-    eventPackage = this._runMappings(eventPackage);
+    eventPackage = this._runMappings.call(this, eventPackage);
 
-
-    // Now that we have all of the data, let's pre-sanitize it
-    // these are general options like make all keys lower case, and camelizeKeys
-    eventPackage = this._preSanitize(eventPackage);
 
     return eventPackage;
   }

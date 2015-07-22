@@ -4,13 +4,13 @@ export default Ember.Object.extend({
 
   hooks: {},
 
-  _run(eventName, payload, context) {
-    console.log("Running hook for: " + eventName);
+  _run(eventName, eventPackage, context) {
+    console.log("Running hook for: " + eventName, eventPackage);
     let hooks     = this.get('hooks'),
         eventHook = hooks[eventName];
 
     if (eventHook) {
-      eventHook.call(context, eventName, payload);
+      eventHook(eventPackage, context);
     } else {
       console.log("No event hook found for: " + eventName);
     }

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import PreSanitizer from 'ember-beam/beams/lib/pre-sanitizer';
 
 const {
   K
@@ -8,6 +9,13 @@ export default Ember.Object.extend({
 
   // Use this hook to initialize the adapter
   setup: K,
+
+  options: {
+    sanitize: {
+      keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
+      flattenPayload: true, // whether or not to flatten the payload
+    }
+  },
 
 
   // REQUIRED
@@ -40,28 +48,26 @@ export default Ember.Object.extend({
   // if found, transforms the payload then calls emit
   // otherwise calls emit
   _process(eventName, payload, context) {
-      
+    
+    let backupEventName = eventName;
+
     let name = this.get('_namespace'),
         eventPackage = { eventName: eventName, payload: payload };
 
     // Run transforms
-    eventPackage = this._transform(name, eventPackage, context);
+    let transformedPackage = this._transform(name, eventPackage, context);
     
 
-
-    // TODO: MAPPING OF JSON
-
-    // Cleanse Payload (replace this with the sanitize method below)
-    // let cleansedPayload = JSON.parse(JSON.stringify(transformedPayload));
-
-    // TODO: presanitize
-    // TODO: sanitize
-
+    // Pre-Sanitize
+    // Now that we have all of the data, let's pre-sanitize it
+    // these are general options like make all keys lower case, and camelizeKeys
+    let preSanitizedPackage = PreSanitizer.call(this, _.clone(transformedPackage));
+      
     // Call emit
-    this.emit.call(this, eventPackage.eventName, eventPackage.payload);
+    this.emit.call(this, preSanitizedPackage.eventName, preSanitizedPackage.payload);
 
     // Run hooks
-    // this._runHooks(context, name, eventName, eventPackage)
+    this._runHooks(name, backupEventName, transformedPackage);
   },
 
 
@@ -79,11 +85,11 @@ export default Ember.Object.extend({
     return eventPackage;
   },
 
-  _runHooks(namespace, eventName, payload, context) {
+  _runHooks(namespace, eventName, eventPackage, context) {
     let providerHook = this.get('config').hooksFor(namespace, true);
     if (providerHook) {
       Ember.run(this, function() {
-        providerHook._run(eventName, payload, context);
+        providerHook._run(eventName, eventPackage, context);
       });
     }
   }
