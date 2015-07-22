@@ -7,7 +7,10 @@ function iterateKeys(payload, method) {
 
     switch(method) {
       case "camelCase":
-        k = Ember.String.camelize(key);
+        k = _.chain(key.split('.'))
+          .map((keyFrag) => Ember.String.camelize(keyFrag) )
+          .join(".")
+          .value();
         break;
       case "lowercase":
         k = key.toLowerCase();
