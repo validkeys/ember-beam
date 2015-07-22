@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 function iterateKeys(payload, method) {
+  if (!payload) { return; }
   Object.keys(payload).forEach(function(key) {
     let k;
 
@@ -10,7 +11,6 @@ function iterateKeys(payload, method) {
           .map((keyFrag) => _.camelCase(keyFrag) )
           .join(".")
           .value();
-
         break;
       case "lowercase":
         k = key.toLowerCase();
@@ -28,7 +28,7 @@ function iterateKeys(payload, method) {
     payload[k] = payload[key];
     if (k !== key) { delete payload[key]; }
 
-    if (typeof payload[k] === 'object' && !_.isArray(payload[k])) {
+    if (typeof payload[k] === 'object' && payload[k] !== null && !_.isArray(payload[k])) {
       iterateKeys(payload[k], method);
     }
   });
