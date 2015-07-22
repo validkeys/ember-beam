@@ -1,16 +1,16 @@
 import Ember from 'ember';
 
 function iterateKeys(payload, method) {
-
   Object.keys(payload).forEach(function(key) {
     let k;
 
     switch(method) {
       case "camelCase":
         k = _.chain(key.split('.'))
-          .map((keyFrag) => Ember.String.camelize(keyFrag) )
+          .map((keyFrag) => _.camelCase(keyFrag) )
           .join(".")
           .value();
+
         break;
       case "lowercase":
         k = key.toLowerCase();
@@ -19,21 +19,17 @@ function iterateKeys(payload, method) {
         k = key.toUpperCase();
         break;
       case "capitalize":
-        k = Ember.String.capitalize(key);
+        k = _.capitalize(key);
         break;
       default:
         k = key;
     }
 
+    payload[k] = payload[key];
+    if (k !== key) { delete payload[key]; }
 
-    if (k != key) {
-      var v = payload[key]
-      payload[k] = v;
-      delete payload[key];
-
-      if (typeof v == 'object') {
-        iterateKeys(v, method);
-      }
+    if (typeof payload[k] === 'object' && !_.isArray(payload[k])) {
+      iterateKeys(payload[k], method);
     }
   });
 
