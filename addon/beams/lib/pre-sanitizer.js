@@ -3,20 +3,26 @@ import {
   camelizeKeys, lowercaseKeys, uppercaseKeys, capitalizeKeys, flattenObject
 } from 'ember-beam/utils/sanitize-helpers'
 
+// Lookup table for each possible sanitizer method
+const keyTransformers = {
+  lowercase:  lowercaseKeys,
+  uppercase:  uppercaseKeys,
+  capitalize: capitalizeKeys,
+  camelcase:  camelizeKeys
+};
 
+// Array containing the only allowed methods for the sanitization
+const possibleKeyformats = ['lowercase','uppercase','capitalize','camelcase'];
+
+
+// PreSanitizer function
+// Called in the context of the consuming adapter
 export default function(eventPackage) {
-  let { eventName, payload } = eventPackage;
 
-  const keyTransformers = {
-    lowercase:  lowercaseKeys,
-    uppercase:  uppercaseKeys,
-    capitalize: capitalizeKeys,
-    camelcase:  camelizeKeys
-  };
+  let { eventName, payload }  = eventPackage,
 
-  const possibleKeyformats = ['lowercase','uppercase','capitalize','camelcase'];
-
-  let sanitizeOptions = this.get('options.sanitize');
+      // Adapter's sanitization options
+      sanitizeOptions         = this.get('options.sanitize');
 
   if (sanitizeOptions) {
 
@@ -26,6 +32,8 @@ export default function(eventPackage) {
     }
 
     // Flatten payload
+    // Converts nested JSON to flattened, dot-syntax notation
+    // required for some prviders (mixpanel)
     if (sanitizeOptions.flattenPayload) {
       eventPackage.payload = flattenObject(eventPackage.payload);
     }

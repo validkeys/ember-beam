@@ -7,71 +7,63 @@ const {
 
 export default Ember.Object.extend({
 
-  defaults(eventPackage, context) {
-    // console.log("Base Transform defaults()", eventPackage);
-    return eventPackage;
+
+  // PUBLIC
+
+  // Allows the developer to add default items to a payload
+  // without having to include that information in each of their transforms
+  // Only receives the payload. Event names should not be changed here
+  defaults(payload, context) {
+    return payload;
   },
 
+
+
+  // A key/value of Event Name -> TransformHandler
+  // ex: "Page View": function() {}
   events:   K,
 
-  // Whether or not the transform has a certain event
-  _hasEvent(eventName) {
-    let events = this.get("events");
-    return events.hasOwnProperty(eventName) ? events[eventName] : undefined;
-  },
-
-  // Finds the transform for the application
-  _applicationTransform: Ember.computed(function() {
-    return this.container.lookup("beam:transforms/application");
-  }),
-
-  // Runs the defaults method on the provider-specific transform
-  _getProviderDefaults(eventPackage, context) {
-    return this.defaults(eventPackage, context);
-  },
-
-  // Runs the defaults on the application transform (if there is one)
-  _getApplicationDefaults(eventPackage, context) {
-
-    let applicationTransform          = this.get('_applicationTransform'),
-        applicationTransformedPackage = null;
-
-    if (applicationTransform) {
-      applicationTransformedPackage = applicationTransform.defaults.call(this, eventPackage, context);
-    }
-
-    return applicationTransformedPackage || eventPackage;
-  },
 
 
-  _runMappings: Mapper,
 
-  run(eventPackage, context) {
+  // PRIVATE
+
+
+  // Called by the adapter. This is the entry point to the transform by the outside adapters
+  _run(eventPackage, context) {
 
     let { eventName, payload } = eventPackage;
 
     // Run application defaults (if available)
     // Should only affect the payload. a new name should not be returned here
-    eventPackage = this._getApplicationDefaults.call(this, eventPackage, context);
-    // console.log("After Application Defaults:", eventPackage);
+    eventPackage.payload = this._getApplicationDefaults.call(this, eventPackage.payload, context);
 
 
     // Do any default transforms using the current providers defaults
-    eventPackage = this._getProviderDefaults.call(this, eventPackage, context);
-    // console.log("After Provider Defaults: ", eventPackage);
+    eventPackage.payload = this._getProviderDefaults.call(this, eventPackage.payload, context);
+
 
     // If the provider-specific transform has the current event run it
     // Otherwise, if the application transform has the event, use it
+    // Provider transforms should override application transforms
+
+        // Fetch the transform for the current adapter
     let providerTransformEvent     = this._hasEvent(eventName),
+
+        // Get the application transform
         applicationTransform       = this.get('_applicationTransform'),
+
+        // Fetch the event transform from the applicationTransform
         applicationTransformEvent  = (applicationTransform) ? applicationTransform._hasEvent(eventName) : undefined;
 
+
+    // Default transform to provider
     if (providerTransformEvent) {
       eventPackage = providerTransformEvent(eventPackage, context);
-      // console.log("After provider event transform: ", eventPackage)
+
+      // If no provider transform, run application transform (if found)
     } else if (applicationTransformEvent) {
       eventPackage = applicationTransformEvent(eventPackage, context);
-      // console.log("After application event transform: ", eventPackage)
     }
 
     // Clean out all of the prototype / constructors
@@ -83,6 +75,55 @@ export default Ember.Object.extend({
 
 
     return eventPackage;
-  }
+  },
+
+
+
+
+
+
+  // Whether or not the transform has the passed event
+  _hasEvent(eventName) {
+    let events = this.get("events");
+    return events.hasOwnProperty(eventName) ? events[eventName] : undefined;
+  },
+
+
+
+
+  // Finds the transform for the application
+  _applicationTransform: Ember.computed(function() {
+    return this.container.lookup("beam:transforms/application");
+  }),
+
+
+
+
+
+  // Runs the defaults method on the provider-specific transform
+  _getProviderDefaults(payload, context) {
+    return this.defaults(payload, context);
+  },
+
+
+
+
+  // Runs the defaults on the application transform (if there is one)
+  _getApplicationDefaults(payload, context) {
+
+    let applicationTransform          = this.get('_applicationTransform'),
+        applicationTransformedPayload = null;
+
+    if (applicationTransform) {
+      applicationTransformedPayload = applicationTransform.defaults.call(this, payload, context);
+    }
+
+    return applicationTransformedPayload || payload;
+  },
+
+
+  _runMappings: Mapper,
+
+
 
 });

@@ -2,10 +2,9 @@ import BeamTransform from 'ember-beam/beams/transforms/base';
 
 export default BeamTransform.extend({
 
-  defaults(eventPackage, context) {
-    let { eventName, payload } = eventPackage;
+  defaults(payload, context) {
     payload["Provider"] = "Mixpanel";
-    return eventPackage;
+    return payload;
   },
 
   events: {

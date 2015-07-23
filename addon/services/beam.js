@@ -4,6 +4,7 @@ import activateAdapters from '../utils/activate-adapters';
 
 export default Ember.Service.extend({
 
+  // Contains the beam config from /config/environment
   _config:    ConfigProxyObject.create({}),
 
 
@@ -12,18 +13,18 @@ export default Ember.Service.extend({
     this._super.apply(this, arguments);
 
     // Get the aplpication config
-    let config      = this.container.lookupFactory("config:environment"),
+    let appConfig   = this.container.lookupFactory("config:environment"),
         beamConfig  = {};
 
     // Ensure there is a beam config
-    if (!config.hasOwnProperty("beam")) {
+    if (!appConfig.hasOwnProperty("beam")) {
       Ember.Logger.info("You have not setup any beam adapters in your config/environment");
       return;
     } else {
-      beamConfig = config.beam;
+      beamConfig = appConfig.beam;
     }
 
-    // Set hte local config
+    // Set the local config
     let _config = this.get("_config");
 
     _config.setProperties({
@@ -50,6 +51,8 @@ export default Ember.Service.extend({
       });    
     });
   },
+
+
 
   // This is the main method for tracking events
   push(eventName, payload, context) {
@@ -89,6 +92,8 @@ export default Ember.Service.extend({
     this._invoke('alias', alias, context);
     return this;
   },
+
+
 
   setUserInfo(options, context) {
     if (!options) { return new Error("You must specify options when calling Beam.setUserInfo"); }

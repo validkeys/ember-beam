@@ -16,6 +16,7 @@ export default BaseAdapter.extend({
   // TODO: Add a call to all 
   emit(eventName, payload) {
     this._super.apply(this, arguments);
+    console.log("MIXPANEL EMITTING: ", { eventName: eventName, payload: payload });
     mixpanel.track(eventName, payload);
   },
 
