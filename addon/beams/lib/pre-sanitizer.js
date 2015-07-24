@@ -1,7 +1,6 @@
-import Ember from 'ember';
 import {
   camelizeKeys, lowercaseKeys, uppercaseKeys, capitalizeKeys, flattenObject
-} from 'ember-beam/utils/sanitize-helpers'
+} from 'ember-beam/utils/sanitize-helpers';
 
 // Lookup table for each possible sanitizer method
 const keyTransformers = {
@@ -19,7 +18,7 @@ const possibleKeyformats = ['lowercase','uppercase','capitalize','camelcase'];
 // Called in the context of the consuming adapter
 export default function(eventPackage) {
 
-  let { eventName, payload }  = eventPackage,
+  let { payload }  = eventPackage,
 
       // Adapter's sanitization options
       sanitizeOptions         = this.get('options.sanitize');

@@ -21,15 +21,15 @@ export default function() {
       adapter.set("config", serviceConfig);
 
       // Add the current adapter to the service's list of adapters
-      adapters.push(adapter) 
+      adapters.push(adapter);
 
       // Get the config for the current adapter
       let adapterConfig = serviceConfig.configFor(providerName);
 
       // Setup the current adapter
       adapter.setup.call(this, adapterConfig);
-    };
+    }
 
   });
 
-};
+}

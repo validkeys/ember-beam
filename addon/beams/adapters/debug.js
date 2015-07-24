@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import BaseAdapter from 'ember-beam/beams/adapters/base';
 
 export default BaseAdapter.extend({

@@ -13,7 +13,7 @@ export default Ember.Object.extend({
   // Allows the developer to add default items to a payload
   // without having to include that information in each of their transforms
   // Only receives the payload. Event names should not be changed here
-  defaults(payload, context) {
+  defaults(payload/*, context */) {
     return payload;
   },
 
@@ -32,7 +32,7 @@ export default Ember.Object.extend({
   // Called by the adapter. This is the entry point to the transform by the outside adapters
   _run(eventPackage, context) {
 
-    let { eventName, payload } = eventPackage;
+    let { eventName } = eventPackage;
 
     // Run application defaults (if available)
     // Should only affect the payload. a new name should not be returned here

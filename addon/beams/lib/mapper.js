@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default function(eventPackage) {
-  let { eventName, payload } = eventPackage;
+  let { payload } = eventPackage;
 
   // First check if provider transform has mappings
   // If not, fall back to application transform

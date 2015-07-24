@@ -11,7 +11,6 @@ export default Ember.Service.extend({
   init() {
 
     this._super.apply(this, arguments);
-
     // Get the aplpication config
     let appConfig   = this.container.lookupFactory("config:environment"),
         beamConfig  = {};
@@ -20,15 +19,14 @@ export default Ember.Service.extend({
     if (!appConfig.hasOwnProperty("beam")) {
       Ember.Logger.info("You have not setup any beam adapters in your config/environment");
       return;
-    } else {
-      beamConfig = appConfig.beam;
     }
+    
+    beamConfig = appConfig.beam;
 
-    // Set the local config
     let _config = this.get("_config");
 
     _config.setProperties({
-      content:          Ember.Object.create(config.beam),
+      content:          Ember.Object.create(beamConfig),
       "__container__":  this.container
     });
 

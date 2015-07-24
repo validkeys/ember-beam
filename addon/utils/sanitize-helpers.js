@@ -1,5 +1,3 @@
-import Ember from 'ember';
-
 function iterateKeys(payload, method) {
   if (!payload) { return; }
   Object.keys(payload).forEach(function(key) {
@@ -34,33 +32,33 @@ function iterateKeys(payload, method) {
   });
 
   return payload;
+}
+
+export let camelizeKeys = function(payload) {
+  return iterateKeys(payload, "camelCase");
 };
 
-let camelizeKeys = function(payload) {
-  return iterateKeys(payload, "camelCase");
-}
-
-let lowercaseKeys = function(payload) {
+export let lowercaseKeys = function(payload) {
   return iterateKeys(payload, "lowercase");
-}
+};
 
-let uppercaseKeys = function(payload) {
+export let uppercaseKeys = function(payload) {
   return iterateKeys(payload, "uppercase");
-}
+};
 
-let capitalizeKeys = function(payload) {
+export let capitalizeKeys = function(payload) {
   return iterateKeys(payload, "capitalize");
-}
+};
 
-let flattenObject = function(ob) {
+export let flattenObject = function(ob) {
   var toReturn = {};
   for (var i in ob) {
-    if (!ob.hasOwnProperty(i)) continue;
+    if (!ob.hasOwnProperty(i)) { continue; }
     
-    if ((typeof ob[i]) == 'object' && !_.isArray(ob[i])) {
+    if ((typeof ob[i]) === 'object' && !_.isArray(ob[i])) {
       var flatObject = flattenObject(ob[i]);
       for (var x in flatObject) {
-        if (!flatObject.hasOwnProperty(x)) continue;
+        if (!flatObject.hasOwnProperty(x)) { continue; }
         
         toReturn[i + '.' + x] = flatObject[x];
       }
@@ -72,4 +70,4 @@ let flattenObject = function(ob) {
 };
 
 
-export { camelizeKeys, lowercaseKeys, uppercaseKeys, capitalizeKeys, flattenObject };
+// export { camelizeKeys, lowercaseKeys, uppercaseKeys, capitalizeKeys, flattenObject };

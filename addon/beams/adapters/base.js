@@ -12,7 +12,7 @@ export default Ember.Object.extend({
   options: {
     sanitize: {
       keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
-      flattenPayload: true, // whether or not to flatten the payload
+      flattenPayload: false, // whether or not to flatten the payload
     }
   },  
 
@@ -29,9 +29,8 @@ export default Ember.Object.extend({
   // REQUIRED
   // Public method where adapter communicates directly with provider
   // ex. mixpanel.track(eventName, payload);
-  emit(eventName, payload) {
-    return K;
-  },
+  // parameters: eventName (string), payload (object)
+  emit: K,
 
 
 
