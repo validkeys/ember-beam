@@ -5,13 +5,12 @@ export default BaseAdapter.extend({
 
   config: {
     sanitize: {
-      keyFormat:      false,
       flattenPayload: false
     }
   },
 
-  setup() {
-    Ember.Logger.debug("Beam Debug Adapter setup()");
+  setup(options = {}) {
+    Ember.Logger.debug("Beam Debug Adapter setup()", options);
   },
 
   emit(eventName, payload) {

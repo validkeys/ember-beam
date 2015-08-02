@@ -7,7 +7,7 @@ export default Ember.Object.extend({
   __container__:  null,
 
   adapters:       null,
-  
+
   hooks:          null,
 
   init() {
@@ -24,7 +24,7 @@ export default Ember.Object.extend({
   }),
 
   configFor(providerName) {
-    return this.get('content.' + providerName);
+    return this.get('content.providers.' + providerName);
   },
 
   // Finds the transform for the passed provider name

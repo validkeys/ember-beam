@@ -9,12 +9,13 @@ export default Ember.Object.extend({
 
   // Base Options
 
-  config: {
-    sanitize: {
-      keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
-      flattenPayload: false, // whether or not to flatten the payload
-    }
-  },  
+  config: {},
+  // config: {
+  //   sanitize: {
+  //     keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
+  //     flattenPayload: false, // whether or not to flatten the payload
+  //   }
+  // },  
 
 
   // REQUIRED
@@ -96,11 +97,22 @@ export default Ember.Object.extend({
 
     // Each adapter should work on it's own version of the payload
     let localPayload          = _.cloneDeep(payload),
-
         backupEventName       = _.clone(eventName),
+        serviceConfig         = this.get('serviceConfig'),
+        attachUser            = this.get('config.attachCurrentUserToAllEvents'),
+        currentUser           = serviceConfig.get('currentUser'),
+        attachUserKey         = this.get('config.currentUserKey') || "user";
+
+    // Attach the current user to the payload if found
+    // and if setting indicate to do so
+    if (attachUser && currentUser) {
+      let userObj = {};
+      userObj[attachUserKey] = currentUser;
+      _.extend(localPayload, userObj);
+    }
 
         // The current adapter's namespace (ex. mixpanel)
-        currentNamespace      = this.get('_namespace'),
+    let currentNamespace      = this.get('_namespace'),
 
         // 1. Convert to an eventPackage
         // From here on out, the event package is what should be

@@ -9,12 +9,17 @@ export default Ember.Service.extend({
 
   _defaultConfig: {
     attachCurrentUserToAllEvents: false,
-    currentUserKey:               "user"
+    currentUserKey:               "user",
+    sanitize: {
+      flattenPayload: false,
+      keyFormat:      false
+    }
   },  
 
   init() {
     this._super.apply(this, arguments);
 
+    // Instantiate a new version of config proxy object
     this.set("_config", ConfigProxyObject.create({}));
 
     // Get the application config
@@ -26,11 +31,9 @@ export default Ember.Service.extend({
       Ember.Logger.info("You have not setup any beam adapters in your config/environment");
       return;
     }
-    
 
     beamConfig        = this._compileConfig(appConfig.beam);
-
-    let _config = this.get("_config");
+    let _config       = this.get("_config");
 
     _config.setProperties({
       content:          Ember.Object.create(beamConfig),
@@ -49,12 +52,17 @@ export default Ember.Service.extend({
         defaultConfig = this.get('_defaultConfig');
 
     // Global config
-    config.config     = _.defaults(config.config || {}, defaultConfig);
+    config.config     = _.defaultsDeep(config.config || {}, defaultConfig);
 
     // Provider config
     _.each(config.providers, (providerData, providerName) => {
       Ember.assert("Ember Beam: Incorrectly formatted provider configuration. It must be an object: provider: { auth: {}, config: {} }", _.isObject(providerData));
-      providerData.config = _.defaults(providerData.config || {}, config.config);
+
+      // Providers inherit default from above application defaults
+      // instead of Beam defaults. This let's a developer assign global defaults
+      // in the beam config and then see those defaults added to each provider
+      // Useful for setting things like sanitization options in one place
+      config.providers[providerName].config = _.defaultsDeep(providerData.config || {}, config.config);
     });
 
     return config;

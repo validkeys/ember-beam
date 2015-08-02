@@ -1,14 +1,21 @@
 # Ember-beam
 
-# THIS IS A WIP. DO NOT USE
+Config:
 
-
-## TODO
-- [ ] Add event name mappings
-- [ ] Serializers for fields? Allow users to change style of individual fields
-- [ ] Add in after event hooks
-- [ ] Add in people specific hooks
-- [ ] Add the ember-addons keyword back to package.json
+```
+beam: {
+  //Global config options
+  config:    {},
+  providers: {
+    providerName: {
+      auth:   {
+        token: "12345" // whatever auth keys are required for that provider
+      },
+      config: {} //optional
+    } 
+  }
+}
+```
 
 
 This README outlines the details of collaborating on this Ember addon.

@@ -719,5 +719,35 @@ test('setCurrentUser should throw if identification key not found in userObject'
   assert.throws(function() { service.setCurrentUser(data, "username", false); }, "could not find the identification key");
 });
 
+test('if config has attachCurrentUserToAllEvents set to true, and service has user, it should attach user to events', function(assert) {
+  let spy = sandbox.spy();
+  let mixpanelAdapter = MixpanelAdapter.extend({
+    emit: spy
+  });
+  registry.register("beam:adapters/mixpanel", mixpanelAdapter);
+  register({ 
+    beam: {
+      config: {
+        attachCurrentUserToAllEvents: true
+      },
+      providers: { 
+        mixpanel: { 
+          auth: { 
+            token: "12345" 
+          } 
+        }
+      } 
+    } 
+  });
+  let service = this.subject({ container: container });
+  let data = { id: 1, email: 'validkeys@gmail.com', name: "Kyle Davis" };
+  service.setCurrentUser(data, "email");
+
+  service.push("Test Event", { test: true }, this);
+  let payload = spy.args[0][1];
+  assert.ok(payload.hasOwnProperty("user"), 'found user in payload');
+  // assert.equal(payload.user.name, 'Kyle Davis', 'has the name property');
+});
+
 // if the adapter has hooks they should be run
 // Test ^ with two adapters to ensure no collisions
