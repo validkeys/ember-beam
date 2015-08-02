@@ -17,11 +17,10 @@ const possibleKeyformats = ['lowercase','uppercase','capitalize','camelcase'];
 // PreSanitizer function
 // Called in the context of the consuming adapter
 export default function(eventPackage) {
-
   let { payload }  = eventPackage,
 
-      // Adapter's sanitization options
-      sanitizeOptions         = this.get('options.sanitize');
+      // Adapter's sanitization config
+      sanitizeOptions         = this.get('config.sanitize');
 
   if (sanitizeOptions) {
 

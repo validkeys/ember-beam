@@ -38,7 +38,6 @@ export default Ember.Object.extend({
     // Should only affect the payload. a new name should not be returned here
     eventPackage.payload = this._getApplicationDefaults.call(this, eventPackage.payload, context);
 
-
     // Do any default transforms using the current providers defaults
     eventPackage.payload = this._getProviderDefaults.call(this, eventPackage.payload, context);
 
@@ -72,7 +71,6 @@ export default Ember.Object.extend({
     // Now that we have the data, let's run mappings to extract only
     // the keys that the user wants
     eventPackage = this._runMappings.call(this, eventPackage);
-
 
     return eventPackage;
   },

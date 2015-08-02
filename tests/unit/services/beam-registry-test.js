@@ -35,7 +35,6 @@ test('i can register multiple events', function(assert) {
   var testFunc = function() {};
   service.on("eventName", testFunc);
   service.on("eventName", testFunc);
-  console.log(service._registry["eventName"]);
   assert.equal(service._registry["eventName"].length, 2);
 });
 

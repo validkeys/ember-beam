@@ -3,7 +3,7 @@ import BaseAdapter from 'ember-beam/beams/adapters/base';
 
 export default BaseAdapter.extend({
 
-  options: {
+  config: {
     sanitize: {
       keyFormat:      false,
       flattenPayload: false

@@ -18,7 +18,7 @@ module('Utils / Config-proxy', {
 });
 
 test('providers should return array of provider keys', function(assert) {
-  var content = { mixpanel: "", keen: "" };
+  var content = { providers: {mixpanel: "", keen: ""} };
   var obj = ConfigProxyObject.create({ content: content });
   var providers = obj.get("providers");
   assert.equal(providers.length, 2);

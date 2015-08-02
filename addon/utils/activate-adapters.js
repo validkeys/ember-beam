@@ -18,7 +18,7 @@ export default function() {
     if (adapter) { 
       
       // Add the beam config object to the adapter
-      adapter.set("config", serviceConfig);
+      adapter.set("serviceConfig", serviceConfig);
 
       // Add the current adapter to the service's list of adapters
       adapters.push(adapter);

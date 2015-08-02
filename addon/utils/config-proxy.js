@@ -2,16 +2,25 @@ import Ember from 'ember';
 
 export default Ember.Object.extend({
 
-  content: {},
+  content:        {},
 
-  __container__: null,
+  __container__:  null,
 
-  adapters: Ember.A([]),
+  adapters:       null,
+  
+  hooks:          null,
 
-  hooks: Ember.A([]),
+  init() {
+    this.setProperties({
+      adapters: Ember.A([]),
+      hooks:    Ember.A([])
+    });
+  },
 
-  providers: Ember.computed('content', function() {
-    return Object.keys(this.get('content'));
+  providers: Ember.computed('content.providers', function() {
+    let providers = this.get('content.providers');
+    if (!providers) { return []; }
+    return Object.keys(this.get('content.providers'));
   }),
 
   configFor(providerName) {

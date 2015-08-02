@@ -5,13 +5,19 @@ import activateAdapters from '../utils/activate-adapters';
 export default Ember.Service.extend({
 
   // Contains the beam config from /config/environment
-  _config:    ConfigProxyObject.create({}),
+  _config:    null,
 
+  _defaultConfig: {
+    attachCurrentUserToAllEvents: false,
+    currentUserKey:               "user"
+  },  
 
   init() {
-
     this._super.apply(this, arguments);
-    // Get the aplpication config
+
+    this.set("_config", ConfigProxyObject.create({}));
+
+    // Get the application config
     let appConfig   = this.container.lookupFactory("config:environment"),
         beamConfig  = {};
 
@@ -21,7 +27,8 @@ export default Ember.Service.extend({
       return;
     }
     
-    beamConfig = appConfig.beam;
+
+    beamConfig        = this._compileConfig(appConfig.beam);
 
     let _config = this.get("_config");
 
@@ -34,19 +41,35 @@ export default Ember.Service.extend({
     activateAdapters.call(this);
   },
 
+  // Adds the config object to the top level beamConfig
+  // Ensures that each provider has a config object with the defaults
+  // If the user specified a config for a provider, it should override the defaults
+  _compileConfig(beamConfig) {
+    let config        = beamConfig,
+        defaultConfig = this.get('_defaultConfig');
+
+    // Global config
+    config.config     = _.defaults(config.config || {}, defaultConfig);
+
+    // Provider config
+    _.each(config.providers, (providerData, providerName) => {
+      Ember.assert("Ember Beam: Incorrectly formatted provider configuration. It must be an object: provider: { auth: {}, config: {} }", _.isObject(providerData));
+      providerData.config = _.defaults(providerData.config || {}, config.config);
+    });
+
+    return config;
+  },
+
 
 
   // Calls the passed method on each adapter passing in a variable amount of args
   _invoke(method, ...args) {
-    Ember.run(this, function() {
-      if (!method) { throw new Error("No method passed to invoke", args); }
+    if (!method) { throw new Error("No method passed to invoke", args); }
 
-      // Loop through each adapter and process
-      this.get("_config.adapters").forEach((adapter) => {
-
-        // If the adapter has the method, call it
-        if (adapter[method]) { adapter[method].apply(adapter, args); }
-      });    
+    // Loop through each adapter and process
+    this.get("_config.adapters").forEach((adapter) => {
+      // If the adapter has the method, call it
+      if (adapter[method]) { adapter[method].apply(adapter, args); }
     });
   },
 
@@ -54,7 +77,7 @@ export default Ember.Service.extend({
 
   // This is the main method for tracking events
   push(eventName, payload, context) {
-
+    Ember.Logger.debug("BEAM EVENT PUSHED: " + eventName, payload);
     // Check if no "real" payload was passed
     if (arguments.length < 3) {
       Ember.Logger.debug("You must pass all 3 parameters to Beam.push for now");
@@ -97,6 +120,21 @@ export default Ember.Service.extend({
     if (!options) { return new Error("You must specify options when calling Beam.setUserInfo"); }
     this._invoke('setUserInfo', options, context);
     return this;
+  },
+
+  setCurrentUser(userObject, key = "email", newSignup = false) {
+    Ember.assert("Ember Beam: First argument to setCurrentUser should be a JSON Object", _.isObject(userObject));
+    Ember.assert("Ember Beam: setCurrentUser Could not find identification key: " + key + " in passed user data", userObject.hasOwnProperty(key));
+
+
+    let config = this.get("_config");
+    config.set("currentUser", userObject);
+
+    if (newSignup) {
+      this._invoke("identify", userObject, key, newSignup);
+    }
+    this._invoke("alias", userObject, key, newSignup);
+    this._invoke("setUserInfo", userObject);
   }
 
 });
