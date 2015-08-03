@@ -68,6 +68,13 @@ export default Ember.Object.extend({
   // PRIVATE METHODS
 
 
+  // A method that individual adapters should override
+  // and return the instance of the 3rd party library they are using
+  // ex. client(){ return mixpanel; }
+  // Messy -- but... well, I have no excuse.
+  client: K,
+
+
   // The service config object
   serviceConfig: null,
 
@@ -163,11 +170,11 @@ export default Ember.Object.extend({
 
   // For the passed provider (namespace), if post-emit hooks are found
   // run them
-  _runHooks(currentNamespace, eventName, eventPackage, context) {
+  _runHooks(currentNamespace, eventName, eventPackage, eventContext) {
     let providerHook = this.get('serviceConfig').hooksFor(currentNamespace, true);
 
     if (providerHook) {
-      providerHook._run(eventName, eventPackage, context);
+      providerHook._run(eventName, eventPackage, eventContext, this);
     }
   }
 

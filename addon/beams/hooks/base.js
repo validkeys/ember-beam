@@ -19,7 +19,7 @@ export default Ember.Object.extend({
   // here, the developer can create consistent eventName lookups
   // in their hooks
 
-  _run(eventName, eventPackage, context) {
+  _run(eventName, eventPackage, context, adapterContext) {
 
     let hooks     = this.get('hooks'),
 
@@ -28,7 +28,7 @@ export default Ember.Object.extend({
 
     // Run if found
     if (eventHook) {
-      eventHook(eventPackage, context);
+      eventHook.call(adapterContext, eventPackage, context);
     }
 
   }
