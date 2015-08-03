@@ -20,7 +20,7 @@ export default function(eventPackage) {
   let { payload }  = eventPackage,
 
       // Adapter's sanitization config
-      sanitizeOptions         = this.get('config.sanitize');
+      sanitizeOptions         = this.get('config.config.sanitize');
 
   if (sanitizeOptions) {
 

@@ -20,16 +20,16 @@ export default function() {
       adapter.set("serviceConfig", serviceConfig);
 
       // Extend the user config for this provider onto the config object on the provider
-      let localConfig = adapter.get("config"),
-          newConfig   = _.defaultsDeep(localConfig, adapterConfig.config);
+      let localConfig         = adapter.get("config");
+      adapterConfig.config    = _.defaultsDeep(localConfig, adapterConfig.config);
 
-      adapter.set("config", newConfig);
+      adapter.set("config", adapterConfig);
 
       // Add the current adapter to the service's list of adapters
       adapters.push(adapter);
 
       // Setup the current adapter
-      adapter.setup.call(this, newConfig);
+      adapter.setup.call(this, adapterConfig);
     }
 
   });

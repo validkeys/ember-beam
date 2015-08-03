@@ -99,9 +99,9 @@ export default Ember.Object.extend({
     let localPayload          = _.cloneDeep(payload),
         backupEventName       = _.clone(eventName),
         serviceConfig         = this.get('serviceConfig'),
-        attachUser            = this.get('config.attachCurrentUserToAllEvents'),
+        attachUser            = this.get('config.config.attachCurrentUserToAllEvents'),
         currentUser           = serviceConfig.get('currentUser'),
-        attachUserKey         = this.get('config.currentUserKey') || "user";
+        attachUserKey         = this.get('config.config.currentUserKey') || "user";
 
     // Attach the current user to the payload if found
     // and if setting indicate to do so

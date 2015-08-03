@@ -10,6 +10,13 @@ export default Ember.Object.extend({
 
   // PUBLIC
 
+  // OPTIONAL
+  // Contains a key / value list of fields to map given any possible payload.
+  // ex. "author": ['id','name']
+  // This mapping will strip out all keys other than those specified within
+  // an author attribute in your payload.
+  // mappings: {},
+
   // Allows the developer to add default items to a payload
   // without having to include that information in each of their transforms
   // Only receives the payload. Event names should not be changed here
