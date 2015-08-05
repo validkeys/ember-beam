@@ -20,6 +20,12 @@ export default BaseAdapter.extend({
     return this._super.apply(this, arguments);
   },
 
+  // A standard API to access your provider's global / client
+  // ex. if using mixpanel, simply have the client method below
+  // return the global: "mixpanel" (without quotes ofcourse)
+  client() {
+  },
+
   // OPTIONAL
   // If your library has an identify method for identifying users
   // This is typicaly when the user first signs up
