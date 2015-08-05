@@ -139,9 +139,9 @@ export default Ember.Service.extend({
     config.set("currentUser", userObject);
 
     if (newSignup) {
-      this._invoke("identify", userObject, key, newSignup);
+      this._invoke("alias", userObject, key, newSignup);
     }
-    this._invoke("alias", userObject, key, newSignup);
+    this._invoke("identify", userObject, key, newSignup);
     this._invoke("setUserInfo", userObject);
   }
 
