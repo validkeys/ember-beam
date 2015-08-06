@@ -134,15 +134,18 @@ export default Ember.Service.extend({
     Ember.assert("Ember Beam: First argument to setCurrentUser should be a JSON Object", _.isObject(userObject));
     Ember.assert("Ember Beam: setCurrentUser Could not find identification key: " + key + " in passed user data", userObject.hasOwnProperty(key));
 
-    let config = this.get("_config"),
-        clonedUserObject = _.clone(userObject);
+    let config            = this.get("_config"),
+        clonedUserObject  = _.clone(userObject);
+
     config.set("currentUser", clonedUserObject);
 
     if (newSignup) {
-      this._invoke("alias", userObject, key, newSignup);
+      this._invoke("alias", userObject[key]);
     }
-    this._invoke("identify", userObject, key, newSignup);
+
     this._invoke("setUserInfo", userObject);
+    this._invoke("identify", userObject[key]);
+    
     Ember.Logger.info("BEAM CURRENT USER SET TO: ", clonedUserObject);
   }
 
