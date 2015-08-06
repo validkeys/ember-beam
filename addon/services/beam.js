@@ -137,15 +137,12 @@ export default Ember.Service.extend({
     let config            = this.get("_config"),
         clonedUserObject  = _.clone(userObject);
 
-    config.set("currentUser", clonedUserObject);
+    config.setProperties({
+      currentUser:            clonedUserObject,
+      currentUserIdentifier: clonedUserObject[key]
+    });
 
-    if (newSignup) {
-      this._invoke("alias", userObject[key]);
-    }
-
-    this._invoke("setUserInfo", userObject);
-    this._invoke("identify", userObject[key]);
-    
+    this._invoke("onCurrentUser", clonedUserObject, clonedUserObject[key], newSignup);
     Ember.Logger.info("BEAM CURRENT USER SET TO: ", clonedUserObject);
   }
 

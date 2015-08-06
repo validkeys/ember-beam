@@ -17,7 +17,6 @@ export default BaseAdapter.extend({
   // Send your events to your provider
   // ex. mixpanel.track(eventName, payload);
   emit(eventName, payload) {
-    this._super.apply(this, arguments);
   },
 
   // A standard API to access your provider's global / client
@@ -27,11 +26,17 @@ export default BaseAdapter.extend({
   },
 
   // OPTIONAL
+  // When you call setCurrentUser, that method is then sent
+  // here for you to deal with as your provider requires
+  onCurrentUser(currentUser, identifier, newSignup = false) {
+  },
+
+
+
   // If your library has an identify method for identifying users
   // This is typicaly when the user first signs up
   // ex. mixpanel.identify(identifier)
   identify( identifier ) {
-    this._super.apply(this, arguments);
   },
 
   // OPTIONAL
@@ -39,7 +44,6 @@ export default BaseAdapter.extend({
   // This is typically either an email address or your internal id
   // ex. mixpanel.alias(identifier)
   alias( identifier ) {
-    this._super.apply(this, arguments);
   }, 
 
   // OPTIONAL
@@ -47,7 +51,6 @@ export default BaseAdapter.extend({
   // This is typicaly when any new or updated information on a user occurs
   // ex. mixpanel.people.set(data)
   setUserInfo( data = {} ) {
-    this._super.apply(this, arguments);
   }
 
 });

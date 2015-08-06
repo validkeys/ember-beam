@@ -38,6 +38,11 @@ export default Ember.Object.extend({
 
 
   // OPTIONAL
+
+  // For provider specific methods to initialize a new user
+  onCurrentUser: K,
+
+
   // Identify users to provider
   // For providers who have an "identify"-like option
   identify: K,
@@ -59,6 +64,8 @@ export default Ember.Object.extend({
   // A place to set current user information
   // like: mixpanel.people.set();
   setUserInfo: K,
+
+
 
 
 
