@@ -1,5 +1,10 @@
 # Ember-beam
 
+A framework for managing event tracking in ember-cli applications. More documentation and screencasts to come.
+
+## TODO: Documentation
+
+
 Config:
 
 ```
