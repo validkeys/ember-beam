@@ -14,7 +14,7 @@ export default Ember.Service.extend({
       flattenPayload: false,
       keyFormat:      false
     }
-  },  
+  },
 
   init() {
     this._super.apply(this, arguments);
@@ -77,7 +77,11 @@ export default Ember.Service.extend({
     // Loop through each adapter and process
     this.get("_config.adapters").forEach((adapter) => {
       // If the adapter has the method, call it
-      if (adapter[method]) { adapter[method].apply(adapter, args); }
+      if (adapter[method]) {
+        Ember.run(this, function() {
+          adapter[method].apply(adapter, args);
+        });
+      }
     });
   },
 

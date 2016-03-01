@@ -15,7 +15,7 @@ export default Ember.Object.extend({
   //     keyFormat:      false, // "lowerCase, upperCase, capitalize, camelcase"
   //     flattenPayload: false, // whether or not to flatten the payload
   //   }
-  // },  
+  // },
 
 
   // REQUIRED
@@ -110,7 +110,7 @@ export default Ember.Object.extend({
   _process(eventName, payload, context) {
 
     // Each adapter should work on it's own version of the payload
-    let localPayload          = _.cloneDeep(payload),
+    let localPayload          = _.extend({}, payload),
         backupEventName       = _.clone(eventName),
         serviceConfig         = this.get('serviceConfig'),
         attachUser            = this.get('config.config.attachCurrentUserToAllEvents'),
@@ -141,7 +141,7 @@ export default Ember.Object.extend({
         // by the developer
         // these are general options like make all keys lower case, and camelizeKeys
         preSanitizedPackage   = PreSanitizer.call(this, _.clone(transformedPackage));
-      
+
     // 4. Call the emit method provided on each adapter
     this.emit.call(this, preSanitizedPackage.eventName, preSanitizedPackage.payload);
 
