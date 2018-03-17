@@ -20,10 +20,15 @@ module.exports = {
     // node files
     {
       files: [
+        'index.js',
         'testem.js',
         'ember-cli-build.js',
         'config/**/*.js',
-        'lib/*/index.js'
+        'tests/dummy/config/**/*.js'
+      ],
+      excludedFiles: [
+        'app/**',
+        'addon/**'
       ],
       parserOptions: {
         sourceType: 'script',
@@ -32,7 +37,11 @@ module.exports = {
       env: {
         browser: false,
         node: true
-      }
+      },
+      plugins: ['node'],
+      rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
+        // add your custom rules and overrides for node files here
+      })
     },
 
     // test files
