@@ -98,7 +98,7 @@ export default Ember.Object.extend({
 
   // Finds the transform for the application
   _applicationTransform: Ember.computed(function() {
-    return this.container.lookup("beam:transforms/application");
+    return Ember.getOwner(this).lookup("beam:transforms/application");
   }),
 
 

@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import ConfigProxyObject from '../utils/config-proxy';
 import activateAdapters from '../utils/activate-adapters';
-import config from '../config/environment';
 
 export default Ember.Service.extend({
 
@@ -24,7 +23,7 @@ export default Ember.Service.extend({
     this.set("_config", ConfigProxyObject.create({}));
 
     // Get the application config
-    let appConfig   = config,
+    let appConfig   = Ember.getOwner(this).resolveRegistration('config:environment'),
         beamConfig  = {};
 
     // Ensure there is a beam config
@@ -38,7 +37,7 @@ export default Ember.Service.extend({
 
     _config.setProperties({
       content:          Ember.Object.create(beamConfig),
-      "__container__":  this.container
+      "__container__":  Ember.getOwner(this)
     });
 
     // Activate each adapter
