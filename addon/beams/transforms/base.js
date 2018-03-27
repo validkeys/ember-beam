@@ -1,10 +1,6 @@
 import Ember from 'ember';
 import Mapper from 'ember-beam/beams/lib/mapper';
 
-const {
-  K
-} = Ember;
-
 export default Ember.Object.extend({
 
 
@@ -28,7 +24,7 @@ export default Ember.Object.extend({
 
   // A key/value of Event Name -> TransformHandler
   // ex: "Page View": function() {}
-  events:   K,
+  events() {},
 
 
 
