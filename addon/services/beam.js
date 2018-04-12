@@ -23,7 +23,7 @@ export default Ember.Service.extend({
     this.set("_config", ConfigProxyObject.create({}));
 
     // Get the application config
-    let appConfig   = this.container.lookupFactory("config:environment"),
+    let appConfig   = Ember.getOwner(this).resolveRegistration('config:environment'),
         beamConfig  = {};
 
     // Ensure there is a beam config
@@ -37,7 +37,7 @@ export default Ember.Service.extend({
 
     _config.setProperties({
       content:          Ember.Object.create(beamConfig),
-      "__container__":  this.container
+      "__container__":  Ember.getOwner(this)
     });
 
     // Activate each adapter

@@ -4,19 +4,19 @@ export default Ember.Service.extend({
 
   _registry: {},
 
-  on: function(eventName, fnc) {
+  on(eventName, fnc) {
     let registry = this.get("_registry");
     registry[eventName] = registry[eventName] || [];
     registry[eventName].push(fnc);
   },
 
-  bulkOn: function(eventName, fncArr) {
+  bulkOn(eventName, fncArr) {
     fncArr.forEach((fnc) => {
       this.on(eventName, fnc);
     });
   },
 
-  send: function(eventName) {
+  send(eventName) {
     let registry = this.get("_registry"),
         handlers = registry[eventName];
 

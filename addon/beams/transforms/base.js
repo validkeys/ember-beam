@@ -1,10 +1,6 @@
 import Ember from 'ember';
 import Mapper from 'ember-beam/beams/lib/mapper';
 
-const {
-  K
-} = Ember;
-
 export default Ember.Object.extend({
 
 
@@ -28,7 +24,7 @@ export default Ember.Object.extend({
 
   // A key/value of Event Name -> TransformHandler
   // ex: "Page View": function() {}
-  events:   K,
+  events() {},
 
 
 
@@ -98,7 +94,7 @@ export default Ember.Object.extend({
 
   // Finds the transform for the application
   _applicationTransform: Ember.computed(function() {
-    return this.container.lookup("beam:transforms/application");
+    return Ember.getOwner(this).lookup("beam:transforms/application");
   }),
 
 

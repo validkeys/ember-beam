@@ -1,10 +1,6 @@
 import Ember from 'ember';
 import PreSanitizer from 'ember-beam/beams/lib/pre-sanitizer';
 
-const {
-  K
-} = Ember;
-
 export default Ember.Object.extend({
 
   // Base Options
@@ -20,7 +16,7 @@ export default Ember.Object.extend({
 
   // REQUIRED
   // Use this hook to initialize the provider's code
-  setup: K,
+  setup() {},
 
 
 
@@ -31,7 +27,7 @@ export default Ember.Object.extend({
   // Public method where adapter communicates directly with provider
   // ex. mixpanel.track(eventName, payload);
   // parameters: eventName (string), payload (object)
-  emit: K,
+  emit() {},
 
 
 
@@ -40,12 +36,12 @@ export default Ember.Object.extend({
   // OPTIONAL
 
   // For provider specific methods to initialize a new user
-  onCurrentUser: K,
+  onCurrentUser() {},
 
 
   // Identify users to provider
   // For providers who have an "identify"-like option
-  identify: K,
+  identify() {},
 
 
 
@@ -54,7 +50,7 @@ export default Ember.Object.extend({
   // OPTIONAL
   // Alias a user (typically by email or userId)
   // For providers who have this option
-  alias: K,
+  alias() {},
 
 
 
@@ -63,7 +59,7 @@ export default Ember.Object.extend({
   // OPTIONAL
   // A place to set current user information
   // like: mixpanel.people.set();
-  setUserInfo: K,
+  setUserInfo() {},
 
 
 
@@ -79,7 +75,7 @@ export default Ember.Object.extend({
   // and return the instance of the 3rd party library they are using
   // ex. client(){ return mixpanel; }
   // Messy -- but... well, I have no excuse.
-  client: K,
+  client() {},
 
 
   // The service config object
